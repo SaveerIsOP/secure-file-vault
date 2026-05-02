@@ -7,30 +7,39 @@
 
 <div class="row mb-4 g-3">
   <div class="col-6 col-lg-3">
-    <div class="stat-card">
-      <div>Total Files</div>
-      <h4>{{ files | length }}</h4>
+    <div class="stat-card d-flex align-items-center gap-3">
+      <div>
+        <div class="stat-label">Total Files</div>
+        <div class="stat-value">{{ files | length }}</div>
+      </div>
+      <i class="bi bi-files stat-icon ms-auto"></i>
     </div>
   </div>
-
   <div class="col-6 col-lg-3">
-    <div class="stat-card">
-      <div>Storage Used</div>
-      <h4>{{ total_size | format_size }}</h4>
+    <div class="stat-card d-flex align-items-center gap-3">
+      <div>
+        <div class="stat-label">Storage Used</div>
+        <div class="stat-value" style="font-size:1.4rem;">{{ total_size | format_size }}</div>
+      </div>
+      <i class="bi bi-hdd stat-icon ms-auto"></i>
     </div>
   </div>
-
   <div class="col-6 col-lg-3">
-    <div class="stat-card">
-      <div>Integrity</div>
-      <h4 style="color:#22c55e;">SHA-256</h4>
+    <div class="stat-card d-flex align-items-center gap-3">
+      <div>
+        <div class="stat-label">Integrity</div>
+        <div class="stat-value" style="font-size:1.4rem;color:#22c55e;">SHA-256</div>
+      </div>
+      <i class="bi bi-shield-check stat-icon ms-auto" style="color:#22c55e;"></i>
     </div>
   </div>
-
   <div class="col-6 col-lg-3">
-    <div class="stat-card">
-      <div>Account</div>
-      <h4>{{ session.username }}</h4>
+    <div class="stat-card d-flex align-items-center gap-3">
+      <div>
+        <div class="stat-label">Account</div>
+        <div class="stat-value" style="font-size:1.3rem;">{{ session.username }}</div>
+      </div>
+      <i class="bi bi-person-circle stat-icon ms-auto"></i>
     </div>
   </div>
 </div>
@@ -38,144 +47,178 @@
 <div class="row g-4">
 
   <!-- Upload Panel -->
-  <div class="col-lg-4">
-    <div class="card" style="background:#1e293b; color:#fff;">
-      <div class="card-header">
-        <h5>Upload File</h5>
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header py-3 px-4">
+        <h5 class="mb-0 fw-semibold"><i class="bi bi-cloud-upload me-2" style="color:#3b82f6;"></i>Upload File</h5>
       </div>
-
-      <div class="card-body">
+      <div class="card-body p-4">
         <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
-          <input type="file" name="file" class="form-control mb-3" required>
-          <button class="btn btn-primary w-100">Upload & Hash</button>
+          <div id="uploadZone" class="upload-zone mb-3">
+            <i class="bi bi-cloud-arrow-up-fill d-block mb-2"></i>
+            <p class="mb-1 fw-semibold" style="color:var(--sv-text);">Drop file here or click to browse</p>
+            <p class="mb-0" style="color:var(--sv-muted);font-size:.85rem;" id="fileNameDisplay">Any file type, up to 100 MB</p>
+            <input type="file" id="fileInput" name="file" class="d-none" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-upload me-2"></i>Upload &amp; Hash
+          </button>
         </form>
-
-        <hr>
-
-        <small>
-          SHA-256 hash is generated on upload. Use verify to check file integrity.
-        </small>
+        <hr style="border-color:var(--sv-border);">
+        <div class="d-flex align-items-start gap-2" style="color:var(--sv-muted);font-size:.82rem;">
+          <i class="bi bi-info-circle mt-1"></i>
+          <span>A SHA-256 hash is computed on upload and stored. Use <strong>Verify</strong> any time to confirm the file has not been tampered with.</span>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Files Table -->
-  <div class="col-lg-8">
-    <div class="card" style="background:#1e293b; color:#fff;">
-
-      <div class="card-header d-flex justify-content-between">
-        <h5>Your Files</h5>
-        <span>{{ files | length }} files</span>
+  <div class="col-12 col-lg-8">
+    <div class="card">
+      <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between">
+        <h5 class="mb-0 fw-semibold"><i class="bi bi-folder2-open me-2" style="color:#3b82f6;"></i>Your Files</h5>
+        <span class="badge" style="background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3);border-radius:6px;font-size:.78rem;">
+          {{ files | length }} file{% if files | length != 1 %}s{% endif %}
+        </span>
       </div>
-
-      <div class="card-body">
-
+      <div class="card-body p-0">
         {% if files %}
-
-        <table class="table" style="color:#e2e8f0;">
-          <thead>
-            <tr>
-              <th>File</th>
-              <th>Size</th>
-              <th>SHA-256</th>
-              <th>Uploaded</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {% for f in files %}
-            {% set ext = f.original_name.rsplit('.', 1)[-1] if '.' in f.original_name else '' %}
-
-            <tr style="background:#1e293b; border-bottom:1px solid #334155;">
-
-              <td>
-                {% if ext in ['jpg','jpeg','png','gif','webp','svg'] %}
-                  📷
-                {% elif ext in ['pdf'] %}
-                  📄
-                {% elif ext in ['zip','rar','7z'] %}
-                  🗜️
-                {% elif ext in ['mp4','mov','avi'] %}
-                  🎬
-                {% elif ext in ['mp3','wav'] %}
-                  🎵
-                {% else %}
-                  📁
-                {% endif %}
-                {{ f.original_name }}
-              </td>
-
-              <td>{{ f.size | format_size }}</td>
-
-              <td>{{ f.sha256[:16] }}...</td>
-
-              <td>{{ f.uploaded_at }}</td>
-
-              <td>
-
-                <a href="{{ url_for('download', file_id=f.id, token=make_download_token(f.id)) }}"
-                   class="btn btn-sm btn-secondary">Download</a>
-
-                <button class="btn btn-sm btn-success verify-btn"
-                        data-file-id="{{ f.id }}"
-                        data-url="{{ url_for('verify', file_id=f.id) }}">
-                  Verify
-                </button>
-
-                <form method="POST"
-                      action="{{ url_for('delete', file_id=f.id) }}"
-                      style="display:inline;">
-                  <button class="btn btn-sm btn-danger">Delete</button>
-                </form>
-
-              </td>
-
-            </tr>
-            {% endfor %}
-          </tbody>
-
-        </table>
-
-        {% else %}
-
-        <div class="text-center">
-          <p>No files yet</p>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr style="color:var(--sv-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;">
+                <th class="ps-4">File</th>
+                <th>Size</th>
+                <th>SHA-256</th>
+                <th>Uploaded</th>
+                <th class="text-end pe-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for f in files %}
+              {% set ext = f.original_name.rsplit('.', 1)[-1] if '.' in f.original_name else '' %}
+              <tr>
+                <td class="ps-4">
+                  <div class="file-name">
+                    {% if ext in ['jpg','jpeg','png','gif','webp','svg'] %}
+                      <i class="bi bi-file-image me-2" style="color:#f59e0b;"></i>
+                    {% elif ext in ['pdf'] %}
+                      <i class="bi bi-file-pdf me-2" style="color:#ef4444;"></i>
+                    {% elif ext in ['zip','tar','gz','rar','7z'] %}
+                      <i class="bi bi-file-zip me-2" style="color:#a855f7;"></i>
+                    {% elif ext in ['mp4','mov','avi','mkv','webm'] %}
+                      <i class="bi bi-file-play me-2" style="color:#ec4899;"></i>
+                    {% elif ext in ['mp3','wav','ogg','flac'] %}
+                      <i class="bi bi-file-music me-2" style="color:#14b8a6;"></i>
+                    {% elif ext in ['py','js','ts','html','css','json','yaml','yml','sh','txt','md'] %}
+                      <i class="bi bi-file-code me-2" style="color:#22c55e;"></i>
+                    {% else %}
+                      <i class="bi bi-file-earmark me-2" style="color:var(--sv-muted);"></i>
+                    {% endif %}
+                    {{ f.original_name }}
+                    {% if ext %}<span class="badge-ext ms-1">{{ ext }}</span>{% endif %}
+                  </div>
+                </td>
+                <td>{{ f.size | format_size }}</td>
+                <td>
+                  <span class="hash-badge"
+                        data-full="{{ f.sha256 }}"
+                        data-short="{{ f.sha256[:16] }}…">{{ f.sha256[:16] }}…</span>
+                </td>
+                <td>
+                  <div class="file-date">{{ f.uploaded_at[:10] }}</div>
+                  <div style="color:var(--sv-muted);font-size:.78rem;">{{ f.uploaded_at[11:16] }} UTC</div>
+                </td>
+                <td class="text-end pe-4">
+                  <div class="d-flex justify-content-end gap-1 flex-wrap">
+                    <a href="{{ url_for('download', file_id=f.id, token=make_download_token(f.id)) }}"
+                       class="btn btn-outline-secondary btn-sm" title="Download">
+                      <i class="bi bi-download"></i>
+                    </a>
+                    <button type="button"
+                            class="btn btn-outline-success btn-sm verify-btn"
+                            id="verify-btn-{{ f.id }}"
+                            data-file-id="{{ f.id }}"
+                            data-url="{{ url_for('verify', file_id=f.id) }}"
+                            title="Verify integrity">
+                      <i class="bi bi-shield-check"></i>
+                    </button>
+                    <form method="POST" action="{{ url_for('delete', file_id=f.id) }}"
+                          onsubmit="return confirm('Delete {{ f.original_name }}?');" class="d-inline">
+                      <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              <tr id="verify-result-row-{{ f.id }}" class="d-none">
+                <td colspan="5" class="px-4 py-2">
+                  <div id="verify-result-{{ f.id }}" class="d-flex align-items-center gap-2" style="font-size:.88rem;"></div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-
+        {% else %}
+        <div class="empty-state text-center">
+          <i class="bi bi-cloud-slash d-block mb-3"></i>
+          <p class="fw-semibold mb-1">No files yet</p>
+          <p style="font-size:.9rem;">Upload your first file using the panel on the left.</p>
+        </div>
         {% endif %}
-
       </div>
     </div>
   </div>
 
 </div>
-
 {% endblock %}
 
 {% block scripts %}
 <script>
-document.querySelectorAll('.verify-btn').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    const url = btn.dataset.url;
+  document.querySelectorAll('.verify-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const fileId = btn.dataset.fileId;
+      const url = btn.dataset.url;
+      const resultDiv = document.getElementById('verify-result-' + fileId);
+      const resultRow = document.getElementById('verify-result-row-' + fileId);
 
-    btn.innerText = "Checking...";
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
-    try {
-      const res = await fetch(url, { method: 'POST' });
-      const data = await res.json();
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          credentials: 'include'
+        });
+        const data = await res.json();
 
-      if (data.ok) {
-        alert("Integrity Verified");
-      } else {
-        alert("Verification Failed");
+        resultRow.classList.remove('d-none');
+        if (data.ok) {
+          resultDiv.innerHTML =
+            '<i class="bi bi-shield-check" style="color:#22c55e;font-size:1.1rem;"></i>' +
+            '<span style="color:#22c55e;font-weight:600;">Integrity Verified</span>' +
+            '<span style="color:var(--sv-muted);">&mdash; ' + data.message + '</span>';
+        } else {
+          resultDiv.innerHTML =
+            '<i class="bi bi-shield-exclamation" style="color:#ef4444;font-size:1.1rem;"></i>' +
+            '<span style="color:#ef4444;font-weight:600;">Verification Failed</span>' +
+            '<span style="color:var(--sv-muted);">&mdash; ' + data.message + '</span>';
+        }
+      } catch (err) {
+        resultRow.classList.remove('d-none');
+        resultDiv.innerHTML =
+          '<i class="bi bi-exclamation-triangle" style="color:#f59e0b;font-size:1.1rem;"></i>' +
+          '<span style="color:#f59e0b;font-weight:600;">Request failed</span>' +
+          '<span style="color:var(--sv-muted);">&mdash; Could not reach the server.</span>';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-shield-check"></i>';
       }
-    } catch {
-      alert("Error verifying file");
-    }
-
-    btn.innerText = "Verify";
+    });
   });
-});
 </script>
 {% endblock %}
