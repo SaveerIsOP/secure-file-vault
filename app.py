@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
-DB_PATH = os.path.join(BASE_DIR, "backup.db")
+DB_PATH = os.path.join(BASE_DIR, "backup_new.db")
 MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100 MB
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
