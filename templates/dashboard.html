@@ -220,26 +220,28 @@ th {
         const data = await res.json();
 
         resultRow.classList.remove('d-none');
-        if (data.ok) {
-          resultDiv.innerHTML =
-  '<i class="bi bi-shield-check me-1" style="color:#22c55e;"></i>' +
-  '<span style="color:#22c55e;font-weight:600;">Integrity Verified</span>' +
-  '<span style="color:#94a3b8;margin-left:6px;">' + data.message + '</span>';
-        } else {
-          resultDiv.innerHTML =
-            '<i class="bi bi-shield-exclamation" style="color:#ef4444;font-size:1.1rem;"></i>' +
-            '<span style="color:#ef4444;font-weight:600;">Verification Failed</span>' +
-            '<span style="color:var(--sv-muted);">&mdash; ' + data.message + '</span>';
-        }
-      } catch (err) {
-        resultRow.classList.remove('d-none');
-        resultDiv.innerHTML =
-          '<i class="bi bi-exclamation-triangle" style="color:#f59e0b;font-size:1.1rem;"></i>' +
-          '<span style="color:#f59e0b;font-weight:600;">Request failed</span>' +
-          '<span style="color:var(--sv-muted);">&mdash; Could not reach the server.</span>';
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-shield-check"></i>';
+
+if (data.ok) {
+  resultDiv.innerHTML =
+    '<i class="bi bi-shield-check me-1" style="color:#22c55e;"></i>' +
+    '<span style="color:#22c55e;font-weight:600;">' + data.message + '</span>';
+
+} else {
+  resultDiv.innerHTML =
+    '<i class="bi bi-shield-exclamation me-1" style="color:#ef4444;"></i>' +
+    '<span style="color:#ef4444;font-weight:600;">' + data.message + '</span>';
+}
+
+} catch (err) {
+  resultRow.classList.remove('d-none');
+  resultDiv.innerHTML =
+    '<i class="bi bi-exclamation-triangle me-1" style="color:#f59e0b;"></i>' +
+    '<span style="color:#f59e0b;font-weight:600;">Server error. Try again.</span>';
+
+} finally {
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-shield-check"></i>';
+}
       }
     });
   });
