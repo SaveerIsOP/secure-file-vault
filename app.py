@@ -85,7 +85,7 @@ def init_db():
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE NOT NULL,
-                email TEXT UNIQUE NOT NULL,
+                email TEXT,
                 password_hash TEXT NOT NULL,
                 created_at TEXT NOT NULL
             )
@@ -137,7 +137,6 @@ def register():
         return redirect(url_for("dashboard"))
     if request.method == "POST":
         username = request.form.get("username", "").strip()
-        email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
         confirm = request.form.get("confirm_password", "")
 
@@ -158,14 +157,14 @@ def register():
         try:
             with get_db() as conn:
                 conn.execute(
-                    "INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?)",
-                    (username, email, pw_hash, datetime.utcnow().isoformat())
+    "INSERT INTO users (username, password_hash, created_at) VALUES (?, ?, ?)",
+    (username, pw_hash, datetime.utcnow().isoformat())
                 )
                 conn.commit()
             flash("Account created! Please log in.", "success")
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
-            flash("Username or email already taken.", "danger")
+            flash("Username already taken.", "danger")
             return render_template("register.html")
 
     return render_template("register.html")
