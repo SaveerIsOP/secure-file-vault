@@ -3,40 +3,6 @@
 
 {% block content %}
 
-<style>
-/* Force white text everywhere in dashboard */
-.card,
-.card * {
-  color: #e2e8f0 !important;
-}
-
-/* Table fix */
-.table,
-.table * {
-  color: #e2e8f0 !important;
-}
-
-/* Header slightly dim */
-.table thead th {
-  color: #94a3b8 !important;
-}
-
-/* File name stronger */
-.file-name {
-  color: #ffffff !important;
-}
-
-/* Upload text */
-.upload-zone p {
-  color: #e2e8f0 !important;
-}
-
-/* Small muted text */
-small, .text-muted {
-  color: #94a3b8 !important;
-}
-</style>
-
 {% set total_size = files | sum(attribute='size') %}
 
 <div class="row mb-4 g-3">
@@ -84,9 +50,9 @@ small, .text-muted {
   <div class="col-12 col-lg-4">
     <div class="card h-100">
       <div class="card-header py-3 px-4">
-        <h5 class="mb-0 fw-semibold"><i class="bi bi-cloud-upload me-2" style="color:#3b82f6;"></i>Upload File</h5>
+        <h5 class="mb-0 fw-semibold" style="color:#e2e8f0;"><i class="bi bi-cloud-upload me-2" style="color:#3b82f6;"></i>Upload File</h5>
       </div>
-      <div class="card-body p-4">
+      <div class="card-body p-4" style="background:#1e293b; color:#ffffff; border-radius:12px;">
         <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
           <div id="uploadZone" class="upload-zone mb-3">
             <i class="bi bi-cloud-arrow-up-fill d-block mb-2"></i>
@@ -109,18 +75,22 @@ small, .text-muted {
 
   <!-- Files Table -->
   <div class="col-12 col-lg-8">
-    <div class="card">
-      <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between">
-        <h5 class="mb-0 fw-semibold"><i class="bi bi-folder2-open me-2" style="color:#3b82f6;"></i>Your Files</h5>
-        <span class="badge" style="background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3);border-radius:6px;font-size:.78rem;">
-          {{ files | length }} file{% if files | length != 1 %}s{% endif %}
-        </span>
+  <div class="card" style="background:#1e293b; color:#ffffff; border-radius:12px; border:1px solid rgba(59,130,246,0.2);">
+      <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between" style="background:#1e293b; border-bottom:1px solid rgba(59,130,246,0.2);">
+  <h5 class="mb-0 fw-semibold" style="color:#e2e8f0;">
+    <i class="bi bi-folder2-open me-2" style="color:#3b82f6;"></i>
+    Your Files
+  </h5>
+
+  <span class="badge" style="background:#1e40af; color:#e0f2fe; border-radius:6px; font-size:.78rem; padding:4px 8px;">
+    {{ files | length }} file{% if files | length != 1 %}s{% endif %}
+  </span>
       </div>
       <div class="card-body p-0">
         {% if files %}
         <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead>
+          <table class="table mb-0" style="color:#e2e8f0;">
+            <thead style="background:#1e293b; color:#94a3b8;">
               <tr style="color:var(--sv-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;">
                 <th class="ps-4">File</th>
                 <th>Size</th>
@@ -132,7 +102,7 @@ small, .text-muted {
             <tbody>
               {% for f in files %}
               {% set ext = f.original_name.rsplit('.', 1)[-1] if '.' in f.original_name else '' %}
-              <tr>
+              <tr style="background:#1e293b;">
                 <td class="ps-4">
                   <div class="file-name">
                     {% if ext in ['jpg','jpeg','png','gif','webp','svg'] %}
