@@ -89,8 +89,8 @@
       <div class="card-body p-0">
         {% if files %}
         <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead>
+          <table class="table mb-0" style="color:#e2e8f0;">
+            <thead style="background:#1e293b; color:#94a3b8;">
               <tr style="color:var(--sv-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;">
                 <th class="ps-4">File</th>
                 <th>Size</th>
@@ -102,7 +102,7 @@
             <tbody>
               {% for f in files %}
               {% set ext = f.original_name.rsplit('.', 1)[-1] if '.' in f.original_name else '' %}
-              <tr>
+              <tr style="background:#1e293b;">
                 <td class="ps-4">
                   <div class="file-name">
                     {% if ext in ['jpg','jpeg','png','gif','webp','svg'] %}
