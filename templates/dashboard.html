@@ -3,6 +3,25 @@
 
 {% block content %}
 
+<style>
+table, table * {
+  color: #e2e8f0 !important;
+}
+
+th {
+  color: #94a3b8 !important;
+  font-weight: 600;
+}
+
+.file-name {
+  color: #ffffff !important;
+}
+
+.hash-badge {
+  color: #93c5fd !important;
+}
+</style>
+
 {% set total_size = files | sum(attribute='size') %}
 
 <div class="row mb-4 g-3">
