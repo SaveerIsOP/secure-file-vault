@@ -88,17 +88,35 @@
       </div>
       <div class="card-body p-0">
         {% if files %}
-  <div class="table-responsive">
-    <table class="table mb-0" style="color:#e2e8f0; background:#1e293b;">
-      <thead style="background:#1e293b; color:#94a3b8;">
-        <tr style="font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;">
-          <th class="ps-4">File</th>
-          <th>Size</th>
-          <th>SHA-256</th>
-          <th>Uploaded</th>
-          <th class="text-end pe-4">Actions</th>
-        </tr>
-      </thead>
+<div class="table-responsive">
+  <table class="table mb-0">
+    <thead>
+      <tr>
+        <th>File</th>
+        <th>Size</th>
+        <th>SHA-256</th>
+        <th>Uploaded</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for f in files %}
+      <tr>
+        <td>{{ f.original_name }}</td>
+        <td>{{ f.size }}</td>
+        <td>{{ f.sha256[:16] }}…</td>
+        <td>{{ f.uploaded_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% else %}
+<div class="text-center">
+  <p>No files yet</p>
+</div>
+{% endif %}
 
       <tbody>
         {% for f in files %}
