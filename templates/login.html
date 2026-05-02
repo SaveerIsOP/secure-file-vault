@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Login — SecureVault{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+
+    <div class="text-center mb-4">
+      <div style="font-size:3.5rem; color:#3b82f6;">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <h1 class="fw-bold mt-2 mb-1" style="font-size:1.8rem;">Welcome back</h1>
+      <p style="color:var(--sv-muted);">Sign in to access your secure files</p>
+    </div>
+
+    <div class="card p-4">
+      <form method="POST" action="{{ url_for('login') }}" novalidate>
+        <div class="mb-3">
+          <label for="username" class="form-label fw-bold" style="color:#ffffff;">Username</label>
+          <div class="input-group">
+            <span class="input-group-text" style="background:var(--sv-dark);border-color:var(--sv-border);color:var(--sv-muted);">
+              <i class="bi bi-person"></i>
+            </span>
+            <input type="text" class="form-control" id="username" name="username"
+                   placeholder="Username" required autocomplete="username">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="form-label fw-bold" style="color:#ffffff;">Password</label>
+          <div class="input-group">
+            <span class="input-group-text" style="background:var(--sv-dark);border-color:var(--sv-border);color:var(--sv-muted);">
+              <i class="bi bi-lock"></i>
+            </span>
+            <input type="password" class="form-control" id="password" name="password"
+                   placeholder="Password" required autocomplete="current-password">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+        </button>
+      </form>
+    </div>
+
+    <p class="text-center mt-3" style="color:var(--sv-muted);">
+      Don't have an account?
+      <a href="{{ url_for('register') }}" class="text-decoration-none" style="color:#3b82f6;">Create one</a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}
