@@ -177,7 +177,7 @@ th {
                 </td>
               </tr>
               <tr id="verify-result-row-{{ f.id }}" class="d-none">
-                <td colspan="5" class="px-4 py-2">
+  <td colspan="5" class="px-4 py-2" style="background:#1e293b;">
                   <div id="verify-result-{{ f.id }}" class="d-flex align-items-center gap-2" style="font-size:.88rem;"></div>
                 </td>
               </tr>
@@ -222,9 +222,9 @@ th {
         resultRow.classList.remove('d-none');
         if (data.ok) {
           resultDiv.innerHTML =
-            '<i class="bi bi-shield-check" style="color:#22c55e;font-size:1.1rem;"></i>' +
-            '<span style="color:#22c55e;font-weight:600;">Integrity Verified</span>' +
-            '<span style="color:var(--sv-muted);">&mdash; ' + data.message + '</span>';
+  '<i class="bi bi-shield-check me-1" style="color:#22c55e;"></i>' +
+  '<span style="color:#22c55e;font-weight:600;">Integrity Verified</span>' +
+  '<span style="color:#94a3b8;margin-left:6px;">' + data.message + '</span>';
         } else {
           resultDiv.innerHTML =
             '<i class="bi bi-shield-exclamation" style="color:#ef4444;font-size:1.1rem;"></i>' +
