@@ -20,6 +20,12 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
 
+from datetime import datetime
+
+@app.context_processor
+def inject_year():
+    return {'current_year': datetime.now().year}
+
 # ── Download token helpers ────────────────────────────────────────────────────
 _TOKEN_TTL = 3600  # seconds
 
