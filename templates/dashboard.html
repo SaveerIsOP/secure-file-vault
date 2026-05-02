@@ -88,21 +88,97 @@
       </div>
       <div class="card-body p-0">
         {% if files %}
-        <div class="table-responsive">
-          <table class="table mb-0" style="color:#e2e8f0; background:#1e293b;">
-            <thead style="background:#1e293b; color:#94a3b8;">
-              <tr style="color:var(--sv-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;">
-                <th class="ps-4">File</th>
-                <th>Size</th>
-                <th>SHA-256</th>
-                <th>Uploaded</th>
-                <th class="text-end pe-4">Actions</th>
-              </tr>
-            </thead>
-           <tbody>
-  {% for f in files %}
-  {% set ext = f.original_name.rsplit('.', 1)[-1] if '.' in f.original_name else '' %}
+  <div class="table-responsive">
+    <table class="table mb-0" style="color:#e2e8f0; background:#1e293b;">
+      <thead style="background:#1e293b; color:#94a3b8;">
+        <tr style="font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;">
+          <th class="ps-4">File</th>
+          <th>Size</th>
+          <th>SHA-256</th>
+          <th>Uploaded</th>
+          <th class="text-end pe-4">Actions</th>
+        </tr>
+      </thead>
 
+      <tbody>
+        {% for f in files %}
+        {% set ext = f.original_name.rsplit('.', 1)[-1] if '.' in f.original_name else '' %}
+
+        <tr style="background:#1e293b; border-bottom:1px solid #334155;">
+          <td class="ps-4" style="background:#1e293b; color:#e2e8f0;">
+            <div class="file-name">
+              {% if ext in ['jpg','jpeg','png','gif','webp','svg'] %}
+                <i class="bi bi-file-image me-2" style="color:#f59e0b;"></i>
+              {% elif ext in ['pdf'] %}
+                <i class="bi bi-file-pdf me-2" style="color:#ef4444;"></i>
+              {% elif ext in ['zip','tar','gz','rar','7z'] %}
+                <i class="bi bi-file-zip me-2" style="color:#a855f7;"></i>
+              {% elif ext in ['mp4','mov','avi','mkv','webm'] %}
+                <i class="bi bi-file-play me-2" style="color:#ec4899;"></i>
+              {% elif ext in ['mp3','wav','ogg','flac'] %}
+                <i class="bi bi-file-music me-2" style="color:#14b8a6;"></i>
+              {% elif ext in ['py','js','ts','html','css','json','yaml','yml','sh','txt','md'] %}
+                <i class="bi bi-file-code me-2" style="color:#22c55e;"></i>
+              {% else %}
+                <i class="bi bi-file-earmark me-2" style="color:#94a3b8;"></i>
+              {% endif %}
+              {{ f.original_name }}
+              {% if ext %}<span class="badge-ext ms-1">{{ ext }}</span>{% endif %}
+            </div>
+          </td>
+
+          <td style="background:#1e293b; color:#e2e8f0;">
+            {{ f.size | format_size }}
+          </td>
+
+          <td style="background:#1e293b; color:#e2e8f0;">
+            <span class="hash-badge">
+              {{ f.sha256[:16] }}…
+            </span>
+          </td>
+
+          <td style="background:#1e293b; color:#e2e8f0;">
+            <div>{{ f.uploaded_at[:10] }}</div>
+            <div style="color:#94a3b8; font-size:.78rem;">
+              {{ f.uploaded_at[11:16] }} UTC
+            </div>
+          </td>
+
+          <td class="text-end pe-4" style="background:#1e293b;">
+            <div class="d-flex justify-content-end gap-1 flex-wrap">
+              <a href="{{ url_for('download', file_id=f.id, token=make_download_token(f.id)) }}"
+                 class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-download"></i>
+              </a>
+
+              <button type="button"
+                      class="btn btn-outline-success btn-sm verify-btn"
+                      data-file-id="{{ f.id }}"
+                      data-url="{{ url_for('verify', file_id=f.id) }}">
+                <i class="bi bi-shield-check"></i>
+              </button>
+
+              <form method="POST" action="{{ url_for('delete', file_id=f.id) }}">
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% else %}
+  <div class="empty-state text-center">
+    <i class="bi bi-cloud-slash d-block mb-3"></i>
+    <p class="fw-semibold mb-1">No files yet</p>
+    <p style="font-size:.9rem;">Upload your first file using the panel on the left.</p>
+  </div>
+{% endif %}
   <tr style="background:#1e293b; border-bottom:1px solid #334155;">
 
     <td class="ps-4" style="background:#1e293b; color:#e2e8f0;">
@@ -174,7 +250,6 @@
   </tr>
 
   {% endfor %}
-</tbody>
 
 {% block scripts %}
 <script>
