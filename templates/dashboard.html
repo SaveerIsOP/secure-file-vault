@@ -37,7 +37,7 @@
 
 <div class="row g-4">
 
-  <!-- Upload -->
+  <!-- Upload Panel -->
   <div class="col-lg-4">
     <div class="card" style="background:#1e293b; color:#fff;">
       <div class="card-header">
@@ -49,14 +49,20 @@
           <input type="file" name="file" class="form-control mb-3" required>
           <button class="btn btn-primary w-100">Upload & Hash</button>
         </form>
+
+        <hr>
+
+        <small>
+          SHA-256 hash is generated on upload. Use verify to check file integrity.
+        </small>
       </div>
     </div>
   </div>
 
-  <!-- Files -->
+  <!-- Files Table -->
   <div class="col-lg-8">
     <div class="card" style="background:#1e293b; color:#fff;">
-      
+
       <div class="card-header d-flex justify-content-between">
         <h5>Your Files</h5>
         <span>{{ files | length }} files</span>
@@ -79,9 +85,26 @@
 
           <tbody>
             {% for f in files %}
-            <tr style="background:#1e293b;">
+            {% set ext = f.original_name.rsplit('.', 1)[-1] if '.' in f.original_name else '' %}
 
-              <td>{{ f.original_name }}</td>
+            <tr style="background:#1e293b; border-bottom:1px solid #334155;">
+
+              <td>
+                {% if ext in ['jpg','jpeg','png','gif','webp','svg'] %}
+                  📷
+                {% elif ext in ['pdf'] %}
+                  📄
+                {% elif ext in ['zip','rar','7z'] %}
+                  🗜️
+                {% elif ext in ['mp4','mov','avi'] %}
+                  🎬
+                {% elif ext in ['mp3','wav'] %}
+                  🎵
+                {% else %}
+                  📁
+                {% endif %}
+                {{ f.original_name }}
+              </td>
 
               <td>{{ f.size | format_size }}</td>
 
@@ -90,6 +113,7 @@
               <td>{{ f.uploaded_at }}</td>
 
               <td>
+
                 <a href="{{ url_for('download', file_id=f.id, token=make_download_token(f.id)) }}"
                    class="btn btn-sm btn-secondary">Download</a>
 
@@ -104,11 +128,13 @@
                       style="display:inline;">
                   <button class="btn btn-sm btn-danger">Delete</button>
                 </form>
+
               </td>
 
             </tr>
             {% endfor %}
           </tbody>
+
         </table>
 
         {% else %}
@@ -125,4 +151,31 @@
 
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.verify-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const url = btn.dataset.url;
+
+    btn.innerText = "Checking...";
+
+    try {
+      const res = await fetch(url, { method: 'POST' });
+      const data = await res.json();
+
+      if (data.ok) {
+        alert("Integrity Verified");
+      } else {
+        alert("Verification Failed");
+      }
+    } catch {
+      alert("Error verifying file");
+    }
+
+    btn.innerText = "Verify";
+  });
+});
+</script>
 {% endblock %}
